@@ -2,8 +2,6 @@ import 'package:beeceptor_app/models/post.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-// TODO: Falta testar tudo isso, com repository e linkar na UI
-
 class PostsService {
   final Dio _dio;
   PostsService(this._dio);
