@@ -1,8 +1,11 @@
 import 'package:beeceptor_app/providers/posts_provider.dart';
+import 'package:beeceptor_app/providers/upload_provider.dart';
 import 'package:beeceptor_app/services/posts_service.dart';
+import 'package:beeceptor_app/services/upload_service.dart';
 import 'package:beeceptor_app/ui/screens/home_page.dart';
 import 'package:beeceptor_app/ui/screens/post_detail_page.dart';
 import 'package:beeceptor_app/ui/screens/posts_page.dart';
+import 'package:beeceptor_app/ui/screens/upload_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +24,12 @@ final GoRouter _router = GoRouter(
         return const HomePage();
       },
       routes: <RouteBase>[
+        GoRoute(
+          path: '/upload',
+          builder: (BuildContext context, GoRouterState state) {
+            return const UploadPage();
+          },
+        ),
         GoRoute(
           path: '/posts',
           builder: (BuildContext context, GoRouterState state) {
@@ -51,6 +60,9 @@ class MainApp extends StatelessWidget {
         Provider<Dio>(create: (_) => Dio()),
         ChangeNotifierProvider<PostsProvider>(
           create: (context) => PostsProvider(PostsService(context.read<Dio>())),
+        ),
+        ChangeNotifierProvider<UploadProvider>(
+          create: (context) => UploadProvider(UploadService(context.read<Dio>())),
         ),
       ],
       child: MaterialApp.router(

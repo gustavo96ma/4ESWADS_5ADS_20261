@@ -21,7 +21,11 @@ class HomePage extends StatelessWidget {
               icon: Icons.read_more,
               onPressed: () => context.go('/posts'),
             ),
-            TextIconButton(text: 'Botao 2', icon: Icons.abc, onPressed: () {}),
+            TextIconButton(
+              text: 'Upload de Arquivos',
+              icon: Icons.cloud_upload,
+              onPressed: () => context.go('/upload'),
+            ),
             TextIconButton(text: 'Botao 3', icon: Icons.abc, onPressed: () {}),
             TextIconButton(text: 'Botao 4', icon: Icons.abc, onPressed: () {}),
           ],
