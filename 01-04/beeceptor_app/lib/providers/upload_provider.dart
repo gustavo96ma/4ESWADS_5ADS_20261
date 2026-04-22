@@ -1,5 +1,6 @@
 import 'package:beeceptor_app/models/upload_result.dart';
 import 'package:beeceptor_app/services/upload_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class UploadProvider extends ChangeNotifier {
@@ -39,8 +40,24 @@ class UploadProvider extends ChangeNotifier {
           notifyListeners();
         },
       );
+    } on DioException catch (e) {
+      // Tratamento especifico de erros de rede/HTTP
+      switch (e.type) {
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.sendTimeout:
+          _error = 'Tempo limite excedido. Verifique sua conexao.';
+          break;
+        case DioExceptionType.connectionError:
+          _error = 'Sem conexao com a internet.';
+          break;
+        case DioExceptionType.badResponse:
+          _error = 'Erro do servidor: ${e.response?.statusCode}';
+          break;
+        default:
+          _error = 'Erro de rede: ${e.message}';
+      }
     } catch (e) {
-      _error = 'Erro ao enviar arquivo: $e';
+      _error = 'Erro inesperado: $e';
     } finally {
       _isLoading = false;
       notifyListeners();
