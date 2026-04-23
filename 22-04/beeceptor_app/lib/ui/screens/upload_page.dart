@@ -1,7 +1,12 @@
 import 'dart:io';
 
+import 'package:beeceptor_app/providers/upload_provider.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+
+//TODO: debuggar pra encontrar o erro que não está dando sucesso ao fazer upload
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
@@ -51,6 +56,26 @@ class _UploadPageState extends State<UploadPage> {
     }
   }
 
+  Future<void> _pickFile() async {
+    final result = await FilePicker.pickFiles();
+    if (result != null && result.files.single.path != null && mounted) {
+      final plataformFile = result.files.single;
+      setState(() {
+        _selectedFile = File(plataformFile.path!);
+        _selectedFileName = plataformFile.name;
+        _isImage = false;
+      });
+    }
+  }
+
+  void _uploadFile() {
+    if (_selectedFile == null) return;
+    context.read<UploadProvider>().upload(
+      _selectedFile!.path,
+      _selectedFileName ?? 'file',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,29 +89,81 @@ class _UploadPageState extends State<UploadPage> {
               children: [
                 OutlinedButton.icon(
                   onPressed: _pickFromGallery,
-                  label: Text('Escolher da Galeria'),
+                  label: Text('Galeria'),
+                  icon: Icon(Icons.browse_gallery),
                 ),
                 OutlinedButton.icon(
                   onPressed: _pickFromCamera,
-                  label: Text('Escolher da Câmera'),
+                  label: Text('Câmera'),
+                  icon: Icon(Icons.camera_alt),
+                ),
+                OutlinedButton.icon(
+                  onPressed: _pickFile,
+                  label: Text('Arquivo'),
+                  icon: Icon(Icons.attach_file),
                 ),
               ],
             ),
             SizedBox(height: 24),
-            if (_selectedFile != null && _isImage)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.file(
-                  _selectedFile!,
-                  height: 200,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
+            if (_selectedFile != null)
+              if (_isImage)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(
+                    _selectedFile!,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              else
+                const Icon(Icons.insert_drive_file, size: 64),
             if (_selectedFileName != null) ...[
               const SizedBox(height: 12),
               Text(_selectedFileName!, textAlign: TextAlign.center),
             ],
+            Consumer<UploadProvider>(
+              builder: (context, provider, _) {
+                return FilledButton.icon(
+                  onPressed: provider.isLoading ? null : _uploadFile,
+                  icon: const Icon(Icons.send),
+                  label: Text(
+                    provider.isLoading ? 'Enviando...' : 'Enviar Arquivo',
+                  ),
+                );
+              },
+            ),
+            Consumer<UploadProvider>(
+              builder: (context, provider, _) {
+                if (provider.isLoading) {
+                  return Column(
+                    children: [
+                      LinearProgressIndicator(value: provider.progress),
+                      Text('${(provider.progress * 100).toStringAsFixed(0)}%'),
+                    ],
+                  );
+                }
+                return SizedBox(width: 20);
+              },
+            ),
+            Consumer<UploadProvider>(
+              builder: (context, provider, _) {
+                if (provider.result != null) {
+                  return Column(
+                    children: [
+                      const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 48,
+                      ),
+                      const Text('Arquivo enviado com sucesso!'),
+                      SelectableText(provider.result!.location),
+                    ],
+                  );
+                }
+                return SizedBox(width: 20);
+              },
+            ),
           ],
         ),
       ),
