@@ -23,7 +23,7 @@ class UploadService {
       onSendProgress: onSendProgress,
     );
 
-    debugPrint(response.data);
+    debugPrint(response.data.toString());
 
     return UploadResult.fromJson(response.data);
   }

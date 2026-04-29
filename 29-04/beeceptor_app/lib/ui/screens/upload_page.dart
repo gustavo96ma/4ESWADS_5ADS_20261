@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-//TODO: debuggar pra encontrar o erro que não está dando sucesso ao fazer upload
-
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
 
@@ -125,7 +123,9 @@ class _UploadPageState extends State<UploadPage> {
             Consumer<UploadProvider>(
               builder: (context, provider, _) {
                 return FilledButton.icon(
-                  onPressed: provider.isLoading ? null : _uploadFile,
+                  onPressed: (provider.isLoading || _selectedFile == null)
+                      ? null
+                      : _uploadFile,
                   icon: const Icon(Icons.send),
                   label: Text(
                     provider.isLoading ? 'Enviando...' : 'Enviar Arquivo',
@@ -162,6 +162,28 @@ class _UploadPageState extends State<UploadPage> {
                   );
                 }
                 return SizedBox(width: 20);
+              },
+            ),
+            Consumer<UploadProvider>(
+              builder: (context, provider, _) {
+                if (provider.error != null) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.error_outline, color: Colors.red),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            provider.error!,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
               },
             ),
           ],

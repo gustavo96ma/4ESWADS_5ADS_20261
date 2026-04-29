@@ -37,20 +37,21 @@ class UploadProvider extends ChangeNotifier {
       );
     } on DioException catch (e) {
       switch (e.type) {
-        case DioException.connectionTimeout:
+        case DioExceptionType.connectionTimeout:
         case DioExceptionType.sendTimeout:
           _error = 'Tempo limite excedido. Verifique sua conexão';
           break;
-        case DioException.connectionError:
+        case DioExceptionType.connectionError:
           _error = 'Sem conexão com a internet';
           break;
-        case DioException.badResponse:
+        case DioExceptionType.badResponse:
           _error = 'Erro do servidor: ${e.response?.statusCode}';
+          break;
         default:
           _error = 'Erro de rede: ${e.message}';
       }
     } catch (e) {
-      _error = 'Erro inesperado $e}';
+      _error = 'Erro inesperado: $e';
     } finally {
       _isLoading = false;
       notifyListeners();
