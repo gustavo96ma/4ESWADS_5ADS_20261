@@ -1,0 +1,36 @@
+name: microaula_app
+description: "Demo da micro aula 20/05 — cache local, share via OS, deploy híbrido."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  go_router: ^17.1.0
+  provider: ^6.1.5+1
+
+  # Cache local
+  shared_preferences: ^2.5.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  sqflite: ^2.4.1
+  path: ^1.9.0
+  path_provider: ^2.1.5
+
+  # Share via OS
+  share_plus: ^11.0.0
+  image_picker: ^1.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
